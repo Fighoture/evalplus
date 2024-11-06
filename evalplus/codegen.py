@@ -116,7 +116,7 @@ def codegen(
 def run_codegen(
     model: str,
     dataset: str,
-    prune_result: str = "",
+    prune_result: str = ".",
     root: str = "evalplus_results",
     bs: Optional[int] = None,
     n_samples: int = 1,

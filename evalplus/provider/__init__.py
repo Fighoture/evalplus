@@ -5,7 +5,7 @@ def make_model(
     model: str,
     backend: str,
     dataset: str,
-    prune_result: str = "",
+    prune_result: str = ".",
     batch_size: int = 1,
     temperature: float = 0.0,
     force_base_prompt: bool = False,
