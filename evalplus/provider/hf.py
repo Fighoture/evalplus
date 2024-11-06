@@ -74,7 +74,7 @@ class HuggingFaceDecoder(DecoderBase):
                 trust_remote_code=True,
             )
 
-        self.model = self.model.to(self.device)
+        # self.model = self.model.to(self.device)
 
     def is_direct_completion(self) -> bool:
         return self.force_base_prompt or self.tokenizer.chat_template is None
