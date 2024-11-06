@@ -116,6 +116,7 @@ def codegen(
 def run_codegen(
     model: str,
     dataset: str,
+    prune_result: str = "",
     root: str = "evalplus_results",
     bs: Optional[int] = None,
     n_samples: int = 1,
@@ -221,6 +222,7 @@ def run_codegen(
     # Model creation
     model_runner = make_model(
         model=model,
+        prune_result=prune_result,
         backend=backend,
         batch_size=bs,
         temperature=temperature,

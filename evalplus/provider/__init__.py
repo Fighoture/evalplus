@@ -5,6 +5,7 @@ def make_model(
     model: str,
     backend: str,
     dataset: str,
+    prune_result: str = "",
     batch_size: int = 1,
     temperature: float = 0.0,
     force_base_prompt: bool = False,
@@ -45,6 +46,7 @@ def make_model(
 
         return HuggingFaceDecoder(
             name=model,
+            prune_result=prune_result,
             batch_size=batch_size,
             temperature=temperature,
             dataset=dataset,

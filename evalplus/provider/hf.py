@@ -1,7 +1,9 @@
 from typing import List
+import os
+import json
 
 import torch
-from transformers import AutoModelForCausalLM, AutoTokenizer
+from transformers import AutoModelForCausalLM, AutoTokenizer, AutoConfig
 
 from evalplus.provider.base import DecoderBase
 from evalplus.provider.utility import (
@@ -14,6 +16,7 @@ class HuggingFaceDecoder(DecoderBase):
     def __init__(
         self,
         name: str,
+        prune_result: str,
         dataset: str,
         force_base_prompt: bool = False,
         attn_implementation: str = "eager",
@@ -40,7 +43,37 @@ class HuggingFaceDecoder(DecoderBase):
             self.eos += ["\n```\n"]
 
         print(f"{self.eos = }")
-        self.model = AutoModelForCausalLM.from_pretrained(name, **kwargs)
+
+        # self.model = AutoModelForCausalLM.from_pretrained(name, **kwargs)
+        if prune_result != "":
+            config = AutoConfig.from_pretrained(name, trust_remote_code=True)
+            config.pre_ffn_hidden = True
+            if prune_result.endswith(".json"):
+                pruning_file_path = prune_result
+            elif f"code_alpaca_20k_prune.json" in os.listdir(prune_result):
+                pruning_file_path = f"{prune_result}/code_alpaca_20k_prune.json"
+            elif "c4_prune.json" in os.listdir(prune_result):
+                pruning_file_path = f"{prune_result}/c4_prune.json"
+            else:
+                raise FileNotFoundError("Could not find pruning file.")
+            print(f"pruning_file_path: {pruning_file_path}")
+            with open(pruning_file_path, "r") as f:
+                pruned_mask = json.load(f)
+            config.pruned_mask = pruned_mask
+
+            self.model = AutoModelForCausalLM.from_pretrained(
+                name,
+                config=config,
+                device_map="auto",
+                trust_remote_code=True,
+            )
+        else:
+            self.model = AutoModelForCausalLM.from_pretrained(
+                name,
+                device_map="auto",
+                trust_remote_code=True,
+            )
+
         self.model = self.model.to(self.device)
 
     def is_direct_completion(self) -> bool:
