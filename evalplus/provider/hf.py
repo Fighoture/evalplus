@@ -3,7 +3,7 @@ import os
 import json
 
 import torch
-from transformers import AutoModelForCausalLM, AutoTokenizer, AutoConfig
+from transformers import AutoModelForCausalLM, AutoTokenizer, AutoConfig, GenerationConfig
 
 from evalplus.provider.base import DecoderBase
 from evalplus.provider.utility import (
@@ -73,6 +73,11 @@ class HuggingFaceDecoder(DecoderBase):
                 device_map="auto",
                 trust_remote_code=True,
             )
+        self.model.generation_config = GenerationConfig.from_pretrained(name)
+        if not hasattr(self.model.generation_config, "pad_token_id"):
+            self.model.generation_config.pad_token_id = self.model.generation_config.eos_token_id
+        if isinstance(self.model.generation_config.eos_token_id, list):
+            self.model.generation_config.eos_token_id = self.model.generation_config.pad_token_id
 
         self.model = self.model.to(self.device)
 
