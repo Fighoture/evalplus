@@ -45,7 +45,7 @@ class HuggingFaceDecoder(DecoderBase):
         print(f"{self.eos = }")
 
         # self.model = AutoModelForCausalLM.from_pretrained(name, **kwargs)
-        if prune_result != "":
+        if prune_result != ".":
             config = AutoConfig.from_pretrained(name, trust_remote_code=True)
             config.pre_ffn_hidden = True
             if prune_result.endswith(".json"):
