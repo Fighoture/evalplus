@@ -79,7 +79,7 @@ class HuggingFaceDecoder(DecoderBase):
         if isinstance(self.model.generation_config.eos_token_id, list):
             self.model.generation_config.eos_token_id = self.model.generation_config.pad_token_id
 
-        self.model = self.model.to(self.device)
+        # self.model = self.model.to(self.device)
 
     def is_direct_completion(self) -> bool:
         return self.force_base_prompt or self.tokenizer.chat_template is None
